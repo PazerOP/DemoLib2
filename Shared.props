@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_PropertySheetDisplayName>Shared</_PropertySheetDisplayName>
+    <IncludePath>$(SolutionDir)snappy-1.1.7;$(SolutionDir)getopt;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)output/$(PlatformShortName)/$(Configuration)/$(ProjectName)/</OutDir>
+    <IntDir>$(SolutionDir)intermediate/$(PlatformShortName)/$(Configuration)/$(ProjectName)/</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <AdditionalIncludeDirectories>$(SolutionDir)DemoLib2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <ConformanceMode>true</ConformanceMode>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
+      <ForcedIncludeFiles>$(SolutionDir)CommonConsole/CommonConsoleStream.hpp;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>$(SolutionDir)output/$(PlatformShortName)/$(ConfigurationName)/CommonConsole/CommonConsole.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>

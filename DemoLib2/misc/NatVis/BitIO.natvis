@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+	<Type Name="BitPosition">
+		<DisplayString>({m_BytePos}, {(int)m_BitPos,d})</DisplayString>
+		<Expand HideRawView="true"></Expand>
+	</Type>
+	<Type Name="BitIOBase">
+		<DisplayString>({m_Position.m_BytePos - m_StartPosition.m_BytePos - 1 + ((m_Position.m_BitPos + 8) - m_StartPosition.m_BitPos) / 8}, {((m_Position.m_BitPos + 8) - m_StartPosition.m_BitPos) % 8}) :: ({m_EndPosition.m_BytePos - m_StartPosition.m_BytePos - 1 + ((m_EndPosition.m_BitPos + 8) - m_StartPosition.m_BitPos) / 8}, {((m_EndPosition.m_BitPos + 8) - m_StartPosition.m_BitPos) % 8}) :: {m_StartPosition} - {m_EndPosition}</DisplayString>
+		<Expand>
+			<Item Name="m_StartPosition">m_StartPosition</Item>
+			<Item Name="m_Position">m_Position</Item>
+			<Item Name="m_EndPosition">m_EndPosition</Item>
+			<Item Name="[base]">(void*)(m_SharedData._Ptr->m_Base)</Item>
+			<Item Name="[local base]">(void*)(m_SharedData._Ptr->m_Base + m_StartPosition.m_BytePos)</Item>
+			<Item Name="[current]">(void*)(m_SharedData._Ptr->m_Base + m_Position.m_BytePos)</Item>
+			<Item Name="[shared]">m_SharedData._Ptr</Item>
+		</Expand>
+	</Type>
+</AutoVisualizer>

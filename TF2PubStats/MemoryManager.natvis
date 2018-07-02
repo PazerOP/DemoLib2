@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+	<Type Name="MemoryBlock">
+		<DisplayString Condition="m_Allocated">Allocated :: {m_Size} bytes</DisplayString>
+		<DisplayString Condition="!m_Allocated">Unallocated :: {m_Size} bytes</DisplayString>
+		<Expand>
+			<Item Name="m_PageBegin">m_PageBegin</Item>
+			<Item Name="m_PageEnd">m_PageEnd</Item>
+			<Item Name="m_Address">m_Address</Item>
+			<Item Name="m_Size">m_Size</Item>
+
+			<Synthetic Name="[elements]">
+				<Expand>
+					<LinkedListItems>
+						<HeadPointer>this</HeadPointer>
+						<NextPointer>m_Next</NextPointer>
+						<ValueNode>this</ValueNode>
+					</LinkedListItems>
+				</Expand>
+			</Synthetic>
+		</Expand>
+	</Type>
+</AutoVisualizer>

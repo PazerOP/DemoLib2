@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+	<Type Name="DemoViewpoint">
+		<DisplayString Condition="m_Flags &amp; DemoViewpointFlags::UseOrigin2 &amp;&amp; m_Flags &amp; DemoViewpointFlags::UseAngles2">Origin {m_ViewOrigin2}, Angles {m_ViewAngles2}</DisplayString>
+		<DisplayString Condition="m_Flags &amp; DemoViewpointFlags::UseOrigin2">Origin {m_ViewOrigin2}, Angles {m_ViewAngles1}</DisplayString>
+		<DisplayString Condition="m_Flags &amp; DemoViewpointFlags::UseAngles2">Origin {m_ViewOrigin1}, Angles {m_ViewAngles2}</DisplayString>
+		<DisplayString>Origin {m_ViewOrigin1}, Angles {m_ViewAngles1}</DisplayString>
+	</Type>
+
+	<Type Name="TimestampedDemoCommand">
+		<DisplayString>Tick {m_Tick}</DisplayString>
+	</Type>
+	<Type Name="std::shared_ptr&lt;IDemoCommand&gt;" Priority="MediumHigh">
+		<DisplayString>{*_Ptr}</DisplayString>
+		<Expand>
+			<ExpandedItem>*_Ptr</ExpandedItem>
+		</Expand>
+	</Type>
+
+	<Type Name="DemoPacketCommand">
+		<DisplayString>dem_packet: Tick {m_Tick}, {m_Messages.size()} Messages @ {m_Viewpoint}</DisplayString>
+	</Type>
+
+	<Type Name="DemoSyncTickCommand">
+		<DisplayString>dem_synctick: Tick {m_Tick}</DisplayString>
+	</Type>
+
+	<Type Name="DemoStringTablesCommand">
+		<DisplayString>dem_stringtables: Tick {m_Tick}</DisplayString>
+	</Type>
+
+	<Type Name="DemoConsoleCommand">
+		<DisplayString>dem_consolecmd: Tick {m_Tick}, {m_Command}</DisplayString>
+	</Type>
+
+	<Type Name="DemoUserCommand">
+		<DisplayString>dem_usercmd: Tick {m_Tick}</DisplayString>
+	</Type>
+
+	<Type Name="DemoDataTablesCommand">
+		<DisplayString>dem_datatables: Tick {m_Tick}, {m_SendTables.size()} SendTables, {m_ServerClasses.size()} server classes</DisplayString>
+	</Type>
+</AutoVisualizer>

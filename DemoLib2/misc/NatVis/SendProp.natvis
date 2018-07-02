@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+	<Type Name="SendProp">
+		<DisplayString Condition="m_Definition._Ptr->m_Type == SendPropType::Int &amp;&amp; m_Definition._Ptr->m_BitCount == 21 &amp;&amp; m_Data.m_Int == 2097151">{m_Definition._Ptr->m_FullName,sb} = NULL</DisplayString>
+		<DisplayString Condition="m_Definition._Ptr->m_Type == SendPropType::Int &amp;&amp; m_Definition._Ptr->m_BitCount == 1">{m_Definition._Ptr->m_FullName,sb} = {!!m_Data.m_Int}</DisplayString>
+		<DisplayString Condition="m_Definition._Ptr->m_Type == SendPropType::Int &amp;&amp; m_Definition._Ptr->m_BitCount != 1">{m_Definition._Ptr->m_FullName,sb} = {m_Data.m_Int}</DisplayString>
+		<DisplayString Condition="m_Definition._Ptr->m_Type == SendPropType::Float">{m_Definition._Ptr->m_FullName,sb} = {m_Data.m_Float,g}</DisplayString>
+		<DisplayString Condition="m_Definition._Ptr->m_Type == SendPropType::Vector">{m_Definition._Ptr->m_FullName,sb} = {m_Data.m_Vector}</DisplayString>
+		<DisplayString Condition="m_Definition._Ptr->m_Type == SendPropType::VectorXY">{m_Definition._Ptr->m_FullName,sb} = {m_Data.m_VectorXY}</DisplayString>
+		<DisplayString Condition="m_Definition._Ptr->m_Type == SendPropType::String">{m_Definition._Ptr->m_FullName,sb} = {m_Data.m_String,s}</DisplayString>
+		<DisplayString Condition="m_Definition._Ptr->m_Type == SendPropType::Array">{m_Definition._Ptr->m_FullName,sb}[{m_Definition._Ptr->m_ArrayElements}]</DisplayString>
+
+		<Expand>
+			<Item Condition="m_Definition._Ptr->m_Type == SendPropType::Int &amp;&amp; m_Definition._Ptr->m_BitCount != 1" Name="[data]">m_Data.m_Int</Item>
+			<Item Condition="m_Definition._Ptr->m_Type == SendPropType::Int &amp;&amp; m_Definition._Ptr->m_BitCount == 1" Name="[data]">!!m_Data.m_Int</Item>
+			<Item Condition="m_Definition._Ptr->m_Type == SendPropType::Float" Name="[data]">m_Data.m_Float</Item>
+			<Item Condition="m_Definition._Ptr->m_Type == SendPropType::Vector" Name="[data]">m_Data.m_Vector</Item>
+			<Item Condition="m_Definition._Ptr->m_Type == SendPropType::VectorXY" Name="[data]">m_Data.m_VectorXY</Item>
+			<Item Condition="m_Definition._Ptr->m_Type == SendPropType::String" Name="[data]">m_Data.m_String</Item>
+			<Item Name="[entity]">m_Entity</Item>
+			<Item Name="[definition]">m_Definition._Ptr</Item>
+			<Item Name="m_LastChangedTick">m_LastChangedTick</Item>
+			<ArrayItems Condition="m_Definition._Ptr->m_Type == SendPropType::Array">
+				<Size>m_Definition._Ptr->m_ArrayElements</Size>
+				<ValuePointer>m_Data.m_Array</ValuePointer>
+			</ArrayItems>
+		</Expand>
+	</Type>
+</AutoVisualizer>

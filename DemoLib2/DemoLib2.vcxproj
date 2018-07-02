@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BitIO\BitIOBase.hpp" />
+    <ClInclude Include="BitIO\BitIOCore.hpp" />
+    <ClInclude Include="BitIO\BitIOReader.hpp" />
+    <ClInclude Include="BitIO\BitIOWriter.hpp" />
+    <ClInclude Include="BitIO\BitPosition.hpp" />
+    <ClInclude Include="BitIO\IStreamElement.hpp" />
+    <ClInclude Include="demos\commands\DemoConsoleCommand.hpp" />
+    <ClInclude Include="demos\commands\DemoDataTablesCommand.hpp" />
+    <ClInclude Include="demos\commands\DemoPacketCommand.hpp" />
+    <ClInclude Include="demos\commands\DemoSignonCommand.hpp" />
+    <ClInclude Include="demos\commands\DemoStringTablesCommand.hpp" />
+    <ClInclude Include="demos\commands\DemoSyncTickCommand.hpp" />
+    <ClInclude Include="demos\commands\DemoUserCommand.hpp" />
+    <ClInclude Include="demos\commands\IDemoCommand.hpp" />
+    <ClInclude Include="demos\commands\TimestampedDemoCommand.hpp" />
+    <ClInclude Include="demos\DemoCommandType.hpp" />
+    <ClInclude Include="demos\DemoFile.hpp" />
+    <ClInclude Include="demos\DemoHeader.hpp" />
+    <ClInclude Include="demos\DemoViewpoint.hpp" />
+    <ClInclude Include="demos\DemoViewpointFlags.hpp" />
+    <ClInclude Include="interface\CmdArgs.hpp" />
+    <ClInclude Include="misc\Breakpoints.hpp" />
+    <ClInclude Include="misc\CompilerSettings.hpp" />
+    <ClInclude Include="misc\Event.hpp" />
+    <ClInclude Include="misc\Exceptions.hpp" />
+    <ClInclude Include="misc\FilterIterator.hpp" />
+    <ClInclude Include="misc\ForcedInclude.hpp" />
+    <ClInclude Include="misc\StrBuf.hpp" />
+    <ClInclude Include="misc\Semaphore.hpp" />
+    <ClInclude Include="misc\ShorthandIntTypes.hpp" />
+    <ClInclude Include="misc\Util.hpp" />
+    <ClInclude Include="misc\Vector.hpp" />
+    <ClInclude Include="misc\VectorXY.hpp" />
+    <ClInclude Include="net\data\BaselineIndex.hpp" />
+    <ClInclude Include="net\data\ConnectionState.hpp" />
+    <ClInclude Include="net\data\SendPropData.hpp" />
+    <ClInclude Include="net\entities\EntityCoder.hpp" />
+    <ClInclude Include="net\data\FileStatus.hpp" />
+    <ClInclude Include="net\data\GameEvent.hpp" />
+    <ClInclude Include="net\data\GameEventDataType.hpp" />
+    <ClInclude Include="net\data\GameEventDeclaration.hpp" />
+    <ClInclude Include="net\data\IGameStreamElement.hpp" />
+    <ClInclude Include="net\data\KnownStringTable.hpp" />
+    <ClInclude Include="net\data\OperatingSystem.hpp" />
+    <ClInclude Include="net\data\PrefetchType.hpp" />
+    <ClInclude Include="net\data\SendProp.hpp" />
+    <ClInclude Include="net\data\SendPropDefinition.hpp" />
+    <ClInclude Include="net\data\SendPropFlags.hpp" />
+    <ClInclude Include="net\data\SendPropType.hpp" />
+    <ClInclude Include="net\data\SendPropVariant.hpp" />
+    <ClInclude Include="net\data\SendTable.hpp" />
+    <ClInclude Include="net\data\ServerClass.hpp" />
+    <ClInclude Include="net\data\ServerInfo.hpp" />
+    <ClInclude Include="net\data\SignonState.hpp" />
+    <ClInclude Include="net\data\SourceConstants.hpp" />
+    <ClInclude Include="net\data\StringTable.hpp" />
+    <ClInclude Include="net\data\StringTableEntry.hpp" />
+    <ClInclude Include="net\data\StringTableUpdate.hpp" />
+    <ClInclude Include="net\data\UserInfo.hpp" />
+    <ClInclude Include="net\data\UserMessageType.hpp" />
+    <ClInclude Include="net\data\VoiceSetup.hpp" />
+    <ClInclude Include="net\entities\Entity.hpp" />
+    <ClInclude Include="net\entities\IBaseEntity.hpp" />
+    <ClInclude Include="net\entities\IPropertySet.hpp" />
+    <ClInclude Include="net\entities\TempEntity.hpp" />
+    <ClInclude Include="net\NetMessageCoder.hpp" />
+    <ClInclude Include="net\netmessages\INetMessage.hpp" />
+    <ClInclude Include="net\netmessages\NetBspDecalMessage.hpp" />
+    <ClInclude Include="net\netmessages\NetClassInfoMessage.hpp" />
+    <ClInclude Include="net\netmessages\NetCreateStringTableMessage.hpp" />
+    <ClInclude Include="net\netmessages\NetCrosshairAngleMessage.hpp" />
+    <ClInclude Include="net\netmessages\NetEntityMessage.hpp" />
+    <ClInclude Include="net\netmessages\NetFileMessage.hpp" />
+    <ClInclude Include="net\netmessages\NetFixAngleMessage.hpp" />
+    <ClInclude Include="net\netmessages\NetGameEventListMessage.hpp" />
+    <ClInclude Include="net\netmessages\NetGameEventMessage.hpp" />
+    <ClInclude Include="net\netmessages\NetGetCvarValueMessage.hpp" />
+    <ClInclude Include="net\netmessages\NetMessageType.hpp" />
+    <ClInclude Include="net\netmessages\NetPacketEntitiesMessage.hpp" />
+    <ClInclude Include="net\netmessages\NetPrefetchMessage.hpp" />
+    <ClInclude Include="net\netmessages\NetPrintMessage.hpp" />
+    <ClInclude Include="net\netmessages\NetServerInfoMessage.hpp" />
+    <ClInclude Include="net\netmessages\NetSetConVarMessage.hpp" />
+    <ClInclude Include="net\netmessages\NetSetPauseMessage.hpp" />
+    <ClInclude Include="net\netmessages\NetSetViewMessage.hpp" />
+    <ClInclude Include="net\netmessages\NetSignonStateMessage.hpp" />
+    <ClInclude Include="net\netmessages\NetSoundMessage.hpp" />
+    <ClInclude Include="net\netmessages\NetStringCmdMessage.hpp" />
+    <ClInclude Include="net\netmessages\NetTempEntitiesMessage.hpp" />
+    <ClInclude Include="net\netmessages\NetTickMessage.hpp" />
+    <ClInclude Include="net\netmessages\NetUpdateStringTableMessage.hpp" />
+    <ClInclude Include="net\netmessages\NetUsrMsgMessage.hpp" />
+    <ClInclude Include="net\netmessages\NetVoiceDataMessage.hpp" />
+    <ClInclude Include="net\netmessages\NetVoiceInitMessage.hpp" />
+    <ClInclude Include="net\worldstate\IWorldEventListener.hpp" />
+    <ClInclude Include="net\worldstate\WorldEvents.hpp" />
+    <ClInclude Include="net\worldstate\WorldState.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="BitIO\BitIOBase.cpp" />
+    <ClCompile Include="BitIO\BitIOCore.cpp">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Full</Optimization>
+      <InlineFunctionExpansion Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Speed</FavorSizeOrSpeed>
+      <OmitFramePointers Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</OmitFramePointers>
+      <EnableFiberSafeOptimizations Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</EnableFiberSafeOptimizations>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Full</Optimization>
+      <InlineFunctionExpansion Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Speed</FavorSizeOrSpeed>
+      <OmitFramePointers Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</OmitFramePointers>
+      <EnableFiberSafeOptimizations Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</EnableFiberSafeOptimizations>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Default</BasicRuntimeChecks>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Default</BasicRuntimeChecks>
+    </ClCompile>
+    <ClCompile Include="BitIO\BitIOReader.cpp" />
+    <ClCompile Include="BitIO\BitIOWriter.cpp" />
+    <ClCompile Include="BitIO\BitPosition.cpp" />
+    <ClCompile Include="BitIO\IStreamElement.cpp" />
+    <ClCompile Include="demos\commands\DemoConsoleCommand.cpp" />
+    <ClCompile Include="demos\commands\DemoDataTablesCommand.cpp" />
+    <ClCompile Include="demos\commands\DemoPacketCommand.cpp" />
+    <ClCompile Include="demos\commands\DemoStringTablesCommand.cpp" />
+    <ClCompile Include="demos\commands\DemoSyncTickCommand.cpp" />
+    <ClCompile Include="demos\commands\DemoUserCommand.cpp" />
+    <ClCompile Include="demos\commands\TimestampedDemoCommand.cpp" />
+    <ClCompile Include="demos\DemoCommandType.cpp" />
+    <ClCompile Include="demos\DemoFile.cpp" />
+    <ClCompile Include="demos\DemoHeader.cpp" />
+    <ClCompile Include="demos\DemoViewpoint.cpp" />
+    <ClCompile Include="misc\Util.cpp" />
+    <ClCompile Include="net\entities\EntityCoder.cpp" />
+    <ClCompile Include="net\data\GameEvent.cpp" />
+    <ClCompile Include="net\data\GameEventDataType.cpp" />
+    <ClCompile Include="net\data\SendProp.cpp" />
+    <ClCompile Include="net\data\SendPropDefinition.cpp" />
+    <ClCompile Include="net\data\SendPropFlags.cpp" />
+    <ClCompile Include="net\data\SendPropType.cpp" />
+    <ClCompile Include="net\data\SendTable.cpp" />
+    <ClCompile Include="net\data\ServerClass.cpp" />
+    <ClCompile Include="net\data\StringTable.cpp" />
+    <ClCompile Include="net\data\StringTableEntry.cpp" />
+    <ClCompile Include="net\data\StringTableUpdate.cpp" />
+    <ClCompile Include="net\data\UserInfo.cpp" />
+    <ClCompile Include="net\entities\Entity.cpp" />
+    <ClCompile Include="net\entities\IPropertySet.cpp" />
+    <ClCompile Include="net\entities\IBaseEntity.cpp" />
+    <ClCompile Include="net\NetMessageCoder.cpp" />
+    <ClCompile Include="net\netmessages\INetMessage.cpp" />
+    <ClCompile Include="net\netmessages\NetBspDecalMessage.cpp" />
+    <ClCompile Include="net\netmessages\NetClassInfoMessage.cpp" />
+    <ClCompile Include="net\netmessages\NetCreateStringTableMessage.cpp" />
+    <ClCompile Include="net\netmessages\NetCrosshairAngleMessage.cpp" />
+    <ClCompile Include="net\netmessages\NetEntityMessage.cpp" />
+    <ClCompile Include="net\netmessages\NetFileMessage.cpp" />
+    <ClCompile Include="net\netmessages\NetFixAngleMessage.cpp" />
+    <ClCompile Include="net\netmessages\NetGameEventListMessage.cpp" />
+    <ClCompile Include="net\netmessages\NetGameEventMessage.cpp" />
+    <ClCompile Include="net\netmessages\NetGetCvarValueMessage.cpp" />
+    <ClCompile Include="net\netmessages\NetMessageType.cpp" />
+    <ClCompile Include="net\netmessages\NetPacketEntitiesMessage.cpp" />
+    <ClCompile Include="net\netmessages\NetPrefetchMessage.cpp" />
+    <ClCompile Include="net\netmessages\NetPrintMessage.cpp" />
+    <ClCompile Include="net\netmessages\NetServerInfoMessage.cpp" />
+    <ClCompile Include="net\netmessages\NetSetConVarMessage.cpp" />
+    <ClCompile Include="net\netmessages\NetSetPauseMessage.cpp" />
+    <ClCompile Include="net\netmessages\NetSetViewMessage.cpp" />
+    <ClCompile Include="net\netmessages\NetSignonStateMessage.cpp" />
+    <ClCompile Include="net\netmessages\NetSoundMessage.cpp" />
+    <ClCompile Include="net\netmessages\NetStringCmdMessage.cpp" />
+    <ClCompile Include="net\netmessages\NetTempEntitiesMessage.cpp" />
+    <ClCompile Include="net\netmessages\NetTickMessage.cpp" />
+    <ClCompile Include="net\netmessages\NetUpdateStringTableMessage.cpp" />
+    <ClCompile Include="net\netmessages\NetUsrMsgMessage.cpp" />
+    <ClCompile Include="net\netmessages\NetVoiceDataMessage.cpp" />
+    <ClCompile Include="net\netmessages\NetVoiceInitMessage.cpp" />
+    <ClCompile Include="net\worldstate\WorldEvents.cpp" />
+    <ClCompile Include="net\worldstate\WorldState.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="misc\NatVis\BitIO.natvis" />
+    <Natvis Include="misc\NatVis\DemoCommands.natvis" />
+    <Natvis Include="misc\NatVis\Entity.natvis" />
+    <Natvis Include="misc\NatVis\SendProp.natvis" />
+    <Natvis Include="misc\NatVis\StringTable.natvis" />
+    <Natvis Include="misc\NatVis\Vector.natvis" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{519F9ABA-90EC-4EC6-A48E-8A1031F423F6}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>DemoLib2</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Shared.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Shared.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Shared.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Shared.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ForcedIncludeFiles>$(SolutionDir)DemoLib2/misc/ForcedInclude.hpp;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ForcedIncludeFiles>$(SolutionDir)DemoLib2/misc/ForcedInclude.hpp;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <ForcedIncludeFiles>$(SolutionDir)DemoLib2/misc/ForcedInclude.hpp;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <ForcedIncludeFiles>$(SolutionDir)DemoLib2/misc/ForcedInclude.hpp;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

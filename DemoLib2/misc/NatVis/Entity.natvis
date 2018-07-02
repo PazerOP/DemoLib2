@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+	<Type Name="Entity">
+		<DisplayString>{m_NetworkTable._Ptr-&gt;m_Name,sb} [{m_Index}]</DisplayString>
+		<Expand>
+			<Item Name="Entity Index">m_Index</Item>
+			<Item Name="Serial Numer">m_SerialNumber</Item>
+
+			<Item Name="Creation Tick" Condition="!m_World._Ptr">m_CreatedTick</Item>
+			<Synthetic Name="Creation Tick" Condition="m_World._Ptr" Expression="m_CreatedTick">
+				<DisplayString>{m_CreatedTick} (delta: -{m_World._Ptr->m_Tick - m_CreatedTick})</DisplayString>
+			</Synthetic>
+
+			<Item Name="Last PVS State Change" Condition="!m_World._Ptr">m_LastPVSStateChangeTick</Item>
+			<Synthetic Name="Last PVS State Change" Condition="m_World._Ptr" Expression="m_LastPVSStateChangeTick">
+				<DisplayString>{m_LastPVSStateChangeTick} (delta: -{m_World._Ptr->m_Tick - m_LastPVSStateChangeTick})</DisplayString>
+			</Synthetic>
+
+			<Item Name="In PVS?">m_InPVS</Item>
+			<Item Name="World">m_World._Ptr</Item>
+
+
+			<Synthetic Name="[properties]">
+				<DisplayString>{{ size={m_Properties._Mypair._Myval2._Mylast - m_Properties._Mypair._Myval2._Myfirst} }}</DisplayString>
+				<Expand>
+					<Item Name="[size]">m_Properties._Mypair._Myval2._Mylast - m_Properties._Mypair._Myval2._Myfirst</Item>
+					<ArrayItems>
+						<Size>m_Properties._Mypair._Myval2._Mylast - m_Properties._Mypair._Myval2._Myfirst</Size>
+						<ValuePointer>m_Properties._Mypair._Myval2._Myfirst</ValuePointer>
+					</ArrayItems>
+				</Expand>
+			</Synthetic>
+		</Expand>
+	</Type>
+</AutoVisualizer>

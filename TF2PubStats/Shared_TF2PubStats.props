@@ -7,7 +7,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies>$(SolutionDir)output/$(PlatformShortName)/$(ConfigurationName)/DemoLib2/DemoLib2.lib;$(SolutionDir)output/$(PlatformShortName)/$(ConfigurationName)/snappy/snappy.lib;$(SolutionDir)output/$(PlatformShortName)/$(ConfigurationName)/CommonConsole/CommonConsole.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)output/$(PlatformShortName)/$(ConfigurationName)/DemoLib2/DemoLib2.lib;$(SolutionDir)output/$(PlatformShortName)/$(ConfigurationName)/CommonConsole/CommonConsole.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)DemoLib2;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

@@ -4,14 +4,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_PropertySheetDisplayName>Shared</_PropertySheetDisplayName>
-    <IncludePath>$(SolutionDir)snappy-1.1.7;$(SolutionDir)getopt;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)getopt;$(SolutionDir)snappy;$(SolutionDir)snappy/$(PlatformShortName)/$(ConfigurationName);$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)output/$(PlatformShortName)/$(Configuration)/$(ProjectName)/</OutDir>
     <IntDir>$(SolutionDir)intermediate/$(PlatformShortName)/$(Configuration)/$(ProjectName)/</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
-      <AdditionalIncludeDirectories>$(SolutionDir)DemoLib2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)DemoLib2;$(SolutionDir)snappy/$(PlatformShortName)/$(ConfigurationName);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <ConformanceMode>true</ConformanceMode>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>

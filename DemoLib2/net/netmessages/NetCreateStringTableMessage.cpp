@@ -87,12 +87,14 @@ public:
 		m_Position += n;
 	}
 
+#if 0
 	void AppendAndTakeOwnership(char* bytes, size_t n, void(*deleter)(void*, const char*, size_t), void* deleter_arg) override
 	{
 		assert(m_Position + n <= m_Capacity);
 		UncheckedByteArraySink::AppendAndTakeOwnership(bytes, n, deleter, deleter_arg);
 		m_Position += n;
 	}
+#endif
 
 private:
 	const size_t m_Capacity;

@@ -503,6 +503,9 @@
     <ClCompile Include="net\netmessages\NetGetCvarValueMessage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\lib\native\src\snappy-single-file.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="misc\NatVis\BitIO.natvis" />

@@ -28,7 +28,7 @@ void NetTickMessage::GetDescription(std::ostream& description) const
 }
 void NetTickMessage::ApplyWorldState(WorldState& world) const
 {
-	assert(m_Tick > world.m_Tick);
+	assert(m_Tick >= world.m_Tick);
 	const uint_fast32_t delta = m_Tick - world.m_Tick;
 
 	world.m_Tick = m_Tick;

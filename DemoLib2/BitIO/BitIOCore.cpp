@@ -45,7 +45,7 @@ void BitIOCore::WriteBits(std::byte* outBuffer, const std::byte* inData, const B
 			const auto& read = *reinterpret_cast<const uint64_t*>(inData + position.Bytes());
 			auto& target = *reinterpret_cast<uint64_t*>(outBuffer + position.Bytes());
 
-			const auto& mask = BitRange<uint64_t>(0, 7 * 8);
+			constexpr auto mask = BitRange<uint64_t>(0, 7 * 8);
 
 			target &= ~(mask << writeBitOffset);
 			target |= (read & mask) << writeBitOffset;
@@ -60,6 +60,8 @@ void BitIOCore::WriteBits(std::byte* outBuffer, const std::byte* inData, const B
 		assert(remaining.TotalBytes() <= 7);
 		const uint_fast8_t remainingBits = remaining.TotalBits();
 		auto read = ReadUInt64(inData + position.Bytes(), remainingBits);
+		const auto initialRead = read;
+		const auto initialOutBuffer = outBuffer;
 
 		for (uint_fast8_t baseBit = 0; baseBit < remainingBits; baseBit += 8)
 		{
@@ -73,5 +75,8 @@ void BitIOCore::WriteBits(std::byte* outBuffer, const std::byte* inData, const B
 			read >>= 8;
 			outBuffer++;
 		}
+
+		const auto finalRead = ReadUInt64(initialOutBuffer, remainingBits, writeBitOffset);
+		assert(finalRead == initialRead);
 	}
 }

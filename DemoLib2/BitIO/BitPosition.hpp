@@ -29,7 +29,7 @@ public:
 	template<class T> BitPosition operator*(T scalar) const;
 	template<class T> BitPosition& operator*=(T scalar);
 
-	__forceinline constexpr operator bool() const { return m_BytePos != 0 || m_BitPos != 0; }
+	//__forceinline constexpr operator bool() const { return m_BytePos != 0 || m_BitPos != 0; }
 	__forceinline constexpr bool operator!() const { return m_BytePos == 0 && m_BitPos == 0; }
 
 	static __forceinline constexpr BitPosition Zero() { return BitPosition(0, 0); };

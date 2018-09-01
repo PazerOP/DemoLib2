@@ -34,7 +34,10 @@ std::optional<BitIOReader> WorldState::GetStaticBaseline(uint_fast16_t serverCla
 		[serverClassIndex](const auto& bl) { return std::strtoul(bl.GetString().c_str(), nullptr, 0) == serverClassIndex; });
 
 	if (foundBL == staticBaselinesTable.end())
+	{
+		cc::out << cc::fg::red << "Failed to find static baseline for server class index " << serverClassIndex << "! This crashes clients." << cc::endl;
 		return std::nullopt;
+	}
 
 	BitIOReader retVal = foundBL->GetUserDataReader();
 	assert(retVal.GetLocalPosition() == BitPosition::Zero());

@@ -181,6 +181,11 @@
     <ClInclude Include="reporters\GameEventReporter.hpp" />
     <ClInclude Include="reporters\UserReporter.hpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CommonConsole\CommonConsole.vcxproj">
+      <Project>{fefa0abe-a7c1-47d5-8ffa-1606655b0be5}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

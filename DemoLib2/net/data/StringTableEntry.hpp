@@ -25,6 +25,8 @@ public:
 	void SetUserData(const BitIOReader& reader);
 	void SetUserData(const BitIOWriter& writer);
 
+	void Clear();
+
 	//StringTableEntry& operator=(const StringTableEntry& other);
 
 private:

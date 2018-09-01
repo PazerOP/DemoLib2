@@ -2,13 +2,13 @@
 
 #include "BitIO/BitIOReader.hpp"
 #include "net/netmessages/INetMessage.hpp"
+#include "net/data/StringTableUpdate.hpp"
 
 #include <memory>
 #include <optional>
 #include <string>
 
 class StringTable;
-class StringTableUpdate;
 
 class NetCreateStringTableMessage : public INetMessage
 {
@@ -17,18 +17,25 @@ public:
 	void ApplyWorldState(WorldState& world) const override;
 	NetMessageType GetType() const override { return NetMessageType::SVC_CREATESTRINGTABLE; }
 
+	const auto& GetTableName() const { return m_TableName; }
+
+	auto& GetTableUpdate() { return m_TableUpdate.value(); }
+	auto& GetTableUpdate() const { return m_TableUpdate.value(); }
+
 protected:
 	void ReadElementInternal(BitIOReader& reader) override;
 	void WriteElementInternal(BitIOWriter& writer) const override;
 	IStreamElement* CreateNewInstance() const override { return new NetCreateStringTableMessage(); }
 
 private:
+	std::string m_TableName;
+
 	static constexpr uint_fast8_t USER_DATA_SIZE_BITS = 12;
 	static constexpr uint_fast8_t USER_DATA_SIZE_BITS_BITS = 4;
 
-	BitIOWriter Compress() const;
+	std::optional<StringTableUpdate> m_TableUpdate;
 
-	std::string m_TableName;
+	BitIOWriter Compress() const;
 
 	uint_fast16_t m_Entries;
 	uint_fast16_t m_MaxEntries;

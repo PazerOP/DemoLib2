@@ -63,3 +63,9 @@ void StringTableEntry::SetUserData(const BitIOWriter& writer)
 {
 	m_UserData = writer;
 }
+
+void StringTableEntry::Clear()
+{
+	m_String.clear();
+	ClearUserData();
+}

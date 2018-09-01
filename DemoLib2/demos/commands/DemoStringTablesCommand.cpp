@@ -8,9 +8,10 @@ void DemoStringTablesCommand::ReadElementInternal(BitIOReader& reader)
 {
 	TimestampedDemoCommand::ReadElementInternal(reader);
 
-	// We don't need to decode string tables for now
 	auto length = reader.ReadInline<uint32_t>("DemoStringTablesCommand length");
-	m_Data = reader.TakeSpan(BitPosition::FromBytes(length));
+	auto data = reader.TakeSpan(BitPosition::FromBytes(length));
+
+	DecodeStringTables(data);
 
 	if (GetBaseCmdArgs().m_PrintDemo)
 		cc::out << STR_FILEBITS(reader) << cc::fg::green << ' ' << GetType() << ": length " << length << cc::endl;
@@ -20,60 +21,106 @@ void DemoStringTablesCommand::WriteElementInternal(BitIOWriter& writer) const
 {
 	TimestampedDemoCommand::WriteElementInternal(writer);
 
-	assert(m_Data.Length().IsByteAligned());
-	writer.Write(m_Data.Length().Bytes(), 32);
+	const auto dataPosition = writer.GetPosition();
+	writer.Write<uint32_t>(0);
 
-	auto clone = m_Data;
-	clone.Seek(BitPosition::Zero(), Seek::Start);
-	writer.Write(clone);
+	const auto startPos = writer.GetPosition();
+
+	assert(m_Tables.size() <= std::numeric_limits<uint8_t>::max());
+	writer.Write<uint8_t>(uint8_t(m_Tables.size()));
+	for (auto& table : m_Tables)
+	{
+		writer.Write(table.first, TABLENAME_MAX_LENGTH);
+
+		auto& entries = table.second;
+		assert(entries.size() <= std::numeric_limits<uint16_t>::max());
+		writer.Write<uint16_t>(uint16_t(entries.size()));
+		for (auto& entry : entries)
+		{
+			writer.Write(entry.GetString(), ENTRY_MAX_LENGTH);
+
+			auto userdata = entry.GetUserDataReader();
+			assert(userdata.GetLocalPosition().IsZero());
+			if (!userdata.Length().IsZero())
+			{
+				writer.Write(true);
+				assert(userdata.Length().TotalBytes() <= std::numeric_limits<uint16_t>::max());
+				writer.Write<uint16_t>(uint16_t(userdata.Length().TotalBytes()));
+				writer.Write(userdata);
+
+				// Pad with zeros so we always have full bytes
+				if (userdata.Length().Bits())
+					writer.Write(0, 8 - userdata.Length().Bits());
+			}
+			else
+				writer.Write(false);
+		}
+
+		writer.Write(false); // Not exactly sure what "client side" stringtable entries are for, but we probably don't need to worry about them?
+	}
+
+	writer.PadToByte();
+
+	const auto endPos = writer.GetPosition();
+	assert((endPos - startPos).IsByteAligned());
+	writer.Seek(dataPosition, Seek::Set);
+
+	assert((endPos - startPos).TotalBytes() <= std::numeric_limits<uint32_t>::max());
+	writer.Write<uint32_t>(uint32_t((endPos - startPos).TotalBytes()));
+	writer.Seek(endPos, Seek::Set);
 }
 
 void DemoStringTablesCommand::ApplyWorldState(WorldState& world) const
 {
 	TimestampedDemoCommand::ApplyWorldState(world);
 
-	auto clone = m_Data;
-	assert(!clone.GetLocalPosition());
+	for (auto& tableData : m_Tables)
+	{
+		const auto& table = world.FindStringTable(tableData.first);
+		assert(table);
 
-	const auto count = clone.ReadInline<uint8_t>();
-	for (uint_fast8_t i = 0; i < count; i++)
-		DecodeStringTable(clone, world);
+		// We have solid evidence now that dem_stringtables commands clear any pre-existing
+		// strings in the target stringtable.
+		for (auto& entry : *table)
+			entry.Clear();
+
+		auto& entries = tableData.second;
+		for (uint_fast16_t i = 0; i < entries.size(); i++)
+			table->Get(i) = entries[i];
+	}
 }
 
-void DemoStringTablesCommand::DecodeStringTable(BitIOReader& reader, WorldState& world)
+void DemoStringTablesCommand::DecodeStringTables(BitIOReader& reader)
 {
-	auto tableName = reader.ReadString(TABLENAME_MAX_LENGTH);
+	m_Tables.clear();
 
-	std::shared_ptr<StringTable> table = world.FindStringTable(tableName);
-	assert(table);
-
-	auto entries = reader.ReadInline<uint16_t>();
-	for (uint_fast16_t i = 0; i < entries; i++)
+	const auto tableCount = reader.ReadInline<uint8_t>("String table count");
+	for (uint_fast8_t t = 0; t < tableCount; t++)
 	{
-		DecodeStringTableEntry(reader, world, table->Get(i));
-	}
+		auto& tableEntries = m_Tables[reader.ReadString(TABLENAME_MAX_LENGTH)];
 
-	if (reader.ReadBit())
-	{
-		// Clientside entries
-		auto clientsideEntries = reader.ReadInline<uint16_t>();
-		for (uint_fast16_t i = 0; i < clientsideEntries; i++)
+		auto entries = reader.ReadInline<uint16_t>();
+		for (uint_fast16_t i = 0; i < entries; i++)
+			DecodeStringTableEntry(reader, tableEntries);
+
+		if (reader.ReadBit())
 		{
-			DecodeStringTableEntry(reader, world, table->Get(entries + i));
+			// Clientside entries
+			auto clientsideEntries = reader.ReadInline<uint16_t>();
+			for (uint_fast16_t i = 0; i < clientsideEntries; i++)
+				DecodeStringTableEntry(reader, tableEntries);
 		}
 	}
 }
 
-void DemoStringTablesCommand::DecodeStringTableEntry(BitIOReader& reader, WorldState& world, StringTableEntry& entry)
+void DemoStringTablesCommand::DecodeStringTableEntry(BitIOReader& reader, std::vector<StringTableEntry>& entries)
 {
+	auto& entry = entries.emplace_back();
 	entry.GetString() = reader.ReadString(ENTRY_MAX_LENGTH);
 
-	BitIOReader data;
 	if (reader.ReadBit())
 	{
 		auto dataLength = reader.ReadInline<uint16_t>();
 		entry.SetUserData(reader.TakeSpan(BitPosition::FromBytes(dataLength)));
 	}
-	else
-		entry.ClearUserData();
 }

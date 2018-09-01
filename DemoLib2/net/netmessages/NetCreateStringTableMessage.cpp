@@ -116,12 +116,13 @@ void NetCreateStringTableMessage::ReadElementInternal(BitIOReader& reader)
 	m_TableName = reader.ReadString("m_TableName");
 
 	reader.Read("m_MaxEntries", m_MaxEntries, 16);
-	const auto encodeBits = StringTable::GetEncodeBits(m_MaxEntries);
-	reader.Read("m_Entries", m_Entries, encodeBits + 1);
+	const auto encodeBits = StringTable::GetEncodeBits(m_MaxEntries) + 1; // 1 extra unnecessary bit on create
+	reader.Read("m_Entries", m_Entries, encodeBits);
 
 	auto bitCount = reader.ReadUVarInt();
 
-	if (reader.ReadBit("userdatafixedsize"))
+	const bool isUserDataFixedSize = reader.ReadBit("userdatafixedsize");
+	if (isUserDataFixedSize)
 	{
 		reader.Read("m_UserDataSize", m_UserDataSize, USER_DATA_SIZE_BITS);
 		reader.Read("m_UserDataSizeBits", m_UserDataSizeBits, USER_DATA_SIZE_BITS_BITS);
@@ -164,16 +165,53 @@ void NetCreateStringTableMessage::ReadElementInternal(BitIOReader& reader)
 	{
 		m_DecompressedData = m_RawData;
 	}
+
+	m_TableUpdate.emplace(encodeBits, m_MaxEntries, isUserDataFixedSize, m_UserDataSizeBits.value_or(0), m_UserDataSize.value_or(0), m_Entries);
+	{
+		auto clone = m_DecompressedData;
+		m_TableUpdate->ReadElement(clone);
+		assert(clone.Remaining().Bytes() == 0);
+	}
 }
 
 BitIOWriter NetCreateStringTableMessage::Compress() const
 {
-	throw NotImplementedException();
-#if 0
-	BitIOWriter writer(true);
-	m_TableUpdate->WriteElement(writer);
-	return writer;
-#endif
+	BitIOWriter compressedWriter(true);
+
+	const auto sizeInfoPos = compressedWriter.GetPosition();
+	compressedWriter.Write<uint64_t>(0); // god damn im an epic programmer (seek 2 x uint32 ahead, we'll fill this in later)
+
+	// Magic header
+	compressedWriter.Write('S');
+	compressedWriter.Write('N');
+	compressedWriter.Write('A');
+	compressedWriter.Write('P');
+
+	BitIOWriter decompressedWriter(true);
+	m_TableUpdate->WriteElement(decompressedWriter);
+	decompressedWriter.PadToByte();
+	uint32_t decompressedSize = decompressedWriter.Length().TotalBytes();
+
+	decompressedWriter.Seek(BitPosition::Zero(), Seek::Start);
+	BitIOReaderSource source(decompressedWriter);
+
+	struct BitIOWriterSink final : public snappy::Sink
+	{
+		BitIOWriterSink(BitIOWriter& writer) : m_Writer(writer) {}
+		void Append(const char* bytes, size_t n) override { m_Writer.WriteChars(bytes, n); }
+
+	private:
+		BitIOWriter& m_Writer;
+	};
+
+	BitIOWriterSink sink(compressedWriter);
+	uint32_t compressedSize = snappy::Compress(&source, &sink);
+
+	compressedWriter.Seek(sizeInfoPos, Seek::Set);
+	compressedWriter.Write(decompressedSize);
+	compressedWriter.Write(compressedSize + 4); // The SNAP "header" is included in this size
+
+	return compressedWriter;
 }
 
 void NetCreateStringTableMessage::WriteElementInternal(BitIOWriter& writer) const
@@ -183,9 +221,10 @@ void NetCreateStringTableMessage::WriteElementInternal(BitIOWriter& writer) cons
 
 	writer.Write(m_TableName);
 
-	const auto encodeBits = StringTable::GetEncodeBits(m_MaxEntries);
+	const auto encodeBits = StringTable::GetEncodeBits(m_MaxEntries) + 1; // 1 extra unnecessary bit on create
 	writer.Write<uint16_t>(m_MaxEntries);
-	writer.Write(m_Entries, encodeBits);
+	const auto entries = m_TableUpdate->GetEntryCount();
+	writer.Write(entries, encodeBits);
 
 	// Determine bit count
 	BitIOWriter compressed = Compress();
@@ -205,7 +244,7 @@ void NetCreateStringTableMessage::WriteElementInternal(BitIOWriter& writer) cons
 		writer.Write(false);
 	}
 
-	writer.Write(false);  // No compression for now
+	writer.Write(true); // Using compression
 
 	compressed.Seek(BitPosition::Zero(), Seek::Start);
 	writer.Write(compressed);
@@ -236,15 +275,8 @@ void NetCreateStringTableMessage::ApplyWorldState(WorldState& world) const
 		table = std::make_shared<StringTable>(world.GetWeak(), copy(m_TableName), m_MaxEntries, m_UserDataSize, m_UserDataSizeBits);
 	}
 
-	// Parse and apply the table update
-	{
-		auto clone = m_DecompressedData;
-		clone.Seek(BitPosition::Zero(), Seek::Start);
-
-		StringTableUpdate tableUpdate(table, m_Entries);
-		tableUpdate.ReadElement(clone);
-		tableUpdate.ApplyUpdate();
-	}
+	// Apply the table update
+	m_TableUpdate->ApplyUpdate(*table);
 
 	if (!wasUpdate)
 	{

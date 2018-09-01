@@ -47,15 +47,16 @@ void DemoPacketCommand::WriteElementInternal(BitIOWriter& writer) const
 
 	assert(tempWriter.Length().TotalBytes() <= std::numeric_limits<uint32_t>::max());
 	writer.Write<uint32_t>((uint32_t)tempWriter.Length().TotalBytes());
-	tempWriter.Seek(BitPosition::Zero(), Seek::Start);
-	writer.Write(tempWriter);
 
 #if 1
 	// Pad to nearest byte
 	if (tempWriter.GetPosition().Bits())
 	{
 		const uint_fast8_t paddingBits = 8 - tempWriter.GetPosition().Bits();
-		cc::out << cc::fg::magenta << "Padding " << GetType() << " command with " << +paddingBits << "bits of zeros" << cc::endl;
+
+		if (GetBaseCmdArgs().m_PrintDemo)
+			cc::out << cc::fg::magenta << "Padding " << GetType() << " command with " << +paddingBits << " bits of zeros" << cc::endl;
+
 		tempWriter.Write<uint_fast8_t>(0, paddingBits);
 	}
 #else
@@ -75,7 +76,13 @@ void DemoPacketCommand::WriteElementInternal(BitIOWriter& writer) const
 	tempWriter.Seek(BitPosition::Zero(), Seek::Start);
 	writer.Write(tempWriter);
 #endif
+
+	tempWriter.Seek(BitPosition::Zero(), Seek::Start);
+	assert(tempWriter.Length().IsByteAligned());
+	writer.Write(tempWriter);
 }
+
+#include "net/netmessages/NetTickMessage.hpp"
 
 void DemoPacketCommand::ApplyWorldState(WorldState& world) const
 {

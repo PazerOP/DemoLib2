@@ -27,17 +27,35 @@ void NetUpdateStringTableMessage::WriteElementInternal(BitIOWriter& writer) cons
 {
 	writer.Write(m_TableID, MAX_STRINGTABLE_BITS);
 
-	assert(m_ChangedEntries >= 1);
-	writer.Write(m_ChangedEntries > 1);
-	if (m_ChangedEntries > 1)
-	{
-		writer.Write(m_ChangedEntries, CHANGED_ENTRIES_BITS);
-	}
+	const auto changedEntries = m_Update ? m_Update->GetEntryCount() : m_ChangedEntries;
 
-	writer.Write(m_Data.Length().TotalBits(), DATA_LENGTH_BITS);
-	auto clone = m_Data;
-	clone.Seek(BitPosition::Zero(), Seek::Start);
-	writer.Write(clone);
+	assert(changedEntries >= 1);
+	writer.Write(changedEntries > 1);
+	if (changedEntries > 1)
+		writer.Write(changedEntries, CHANGED_ENTRIES_BITS);
+
+	if (m_Update)
+	{
+		BitIOWriter tempWriter(true);
+		m_Update->WriteElement(tempWriter);
+
+		tempWriter.SeekBits(0, Seek::Start);
+		writer.Write(tempWriter.Length().TotalBits(), DATA_LENGTH_BITS);
+		writer.Write(tempWriter);
+	}
+	else
+	{
+		writer.Write(m_Data.Length().TotalBits(), DATA_LENGTH_BITS);
+		auto clone = m_Data;
+		clone.Seek(BitPosition::Zero(), Seek::Start);
+		writer.Write(clone);
+	}
+}
+
+NetUpdateStringTableMessage::NetUpdateStringTableMessage(const StringTable& table, KnownStringTable index) :
+	m_TableID(uint_fast8_t(index))
+{
+	m_Update.emplace(table, 0);
 }
 
 void NetUpdateStringTableMessage::GetDescription(std::ostream& description) const
@@ -51,14 +69,20 @@ void NetUpdateStringTableMessage::ApplyWorldState(WorldState& world) const
 	auto stringTable = world.m_StringTables[m_TableID];
 
 	// Parse and apply new table update
+	if (!m_Update)
 	{
-		StringTableUpdate update(stringTable, m_ChangedEntries);
+		StringTableUpdate update(*stringTable, m_ChangedEntries);
 
 		auto clone = m_Data;
 		clone.Seek(BitPosition::Zero(), Seek::Start);
 		update.ReadElement(clone);
 
-		update.ApplyUpdate();
-		world.m_Events.PostStringTableUpdate(stringTable);
+		update.ApplyUpdate(*stringTable);
 	}
+	else
+	{
+		m_Update->ApplyUpdate(*stringTable);
+	}
+
+	world.m_Events.PostStringTableUpdate(stringTable);
 }

@@ -21,6 +21,8 @@ public:
 	static uint_fast8_t GetEncodeBits(uint_fast16_t maxEntries);
 	uint_fast16_t GetMaxEntries() const { return m_MaxEntries; }
 
+	uint_fast16_t FindLowestUnused() const;
+
 	StringTableEntry& Get(uint_fast16_t i) { assert(i < m_MaxEntries); return m_Entries[i]; }
 	const StringTableEntry& Get(uint_fast16_t i) const { assert(i < m_MaxEntries); return m_Entries[i]; }
 	StringTableEntry& operator[](uint_fast16_t i) { return Get(i); }
@@ -52,4 +54,5 @@ private:
 
 public:
 	Event<const std::shared_ptr<StringTable>&> OnUpdate;
+	void OnUpdated() { OnUpdate(shared_from_this()); }
 };

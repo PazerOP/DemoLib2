@@ -22,6 +22,8 @@ public:
 	auto GetPlaybackFrames() const { return m_PlaybackFrames; }
 	auto GetSignonLength() const { return m_SignonLength; }
 
+	void SetSignonLength(uint32_t signonLength) { m_SignonLength = signonLength; }
+
 	static constexpr uint_fast16_t DEMO_HEADER_SIZE = 1072;
 
 protected:

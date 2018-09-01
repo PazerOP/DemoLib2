@@ -62,12 +62,13 @@ uint_fast8_t BitIOWriter::Write(double data)
 	static_assert(sizeof(data) == sizeof(uint64_t));
 	return Write(*reinterpret_cast<const uint64_t*>(&data), sizeof(data) * 8);
 }
-size_t BitIOWriter::Write(const std::string_view& str)
+size_t BitIOWriter::Write(const std::string_view& str, size_t maxChars)
 {
-	size_t charsWritten = str.size();
-	WriteChars(str.data(), str.size());
+	assert(maxChars >= 2);
+	size_t charsWritten = std::min(str.size(), maxChars - 1);
+	WriteChars(str.data(), charsWritten);
 
-	if (str.size() && str[str.size() - 1] != '\0')
+	if (!str.size() || str[str.size() - 1] != '\0')
 	{
 		Write('\0');
 		charsWritten += 1;
@@ -106,6 +107,12 @@ void BitIOWriter::WriteChars(const char* data, size_t chars)
 
 	m_Position += length;
 	UpdateEndPosition();
+}
+
+void BitIOWriter::PadToByte()
+{
+	if (auto bits = Length().Bits())
+		Write<uint8_t>(0, BitPosition::FromBits(8 - bits).Bits());
 }
 
 uint_fast8_t BitIOWriter::WriteBitVec(const Vector& vec)

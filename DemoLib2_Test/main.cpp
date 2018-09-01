@@ -71,110 +71,9 @@ static void AddMissingStaticBaselines(const WorldState& world, DemoStringTablesC
 
 		cc::out << cc::fg::green << "Added missing static baseline " << serverClassIndex << " at position " << baselineTable.size() - 1 << cc::endl;
 	}
-
-#if false
-	const auto& currentTable = world.GetStringTable(KnownStringTable::StaticBaselines);
-	auto msg = std::make_shared<NetUpdateStringTableMessage>(*currentTable, KnownStringTable::StaticBaselines);
-
-	auto currentIndex = currentTable->FindLowestUnused();
-
-	for (const auto& item : std::filesystem::recursive_directory_iterator("staticbaselines/"))
-	{
-		auto indexString = item.path().filename().u8string();
-		const auto index = atoi(indexString.c_str());
-
-		bool found = false;
-		for (auto& string : *currentTable)
-		{
-			if (string.GetString() == indexString)
-			{
-				found = true;
-				break;
-			}
-		}
-
-		if (found)
-			continue;
-
-		BitIOWriter writer(true);
-		writer.Write(false); // "empty" static baseline
-		writer.PadToByte();
-		writer.SeekBits(0, Seek::Start);
-
-		msg->GetUpdate().GetEntries().emplace_back(currentIndex, StringTableEntry(std::move(indexString), std::move(writer)));
-
-		cc::out << cc::fg::green << "Added missing static baseline " << index << " at position " << currentIndex << cc::endl;
-
-		currentIndex++;
-	}
-
-	for (const auto& entry : *currentTable)
-	{
-		auto& updates = msg->GetUpdate().GetEntries();
-		updates.emplace_back(std::distance(currentTable->begin(), &entry), StringTableEntry());
-	}
-
-	return msg;
-#endif
-
-#if 0
-	uint_fast16_t lastIndex = update.GetEntryCount() + 100;// update.GetMaxEntries() - 5;
-	for (const auto& item : std::filesystem::recursive_directory_iterator("staticbaselines/"))
-	{
-		auto indexString = item.path().filename().u8string();
-		const auto index = atoi(indexString.c_str());
-
-		assert(index != 0);
-
-		bool found = false;
-		for (auto& entry : update.GetEntries())
-		{
-			auto parsed = atoi(entry.second.GetString().c_str());
-			assert(parsed != 0);
-			if (parsed == index)
-			{
-				found = true;
-				break;
-			}
-		}
-
-		if (found)
-			continue;
-
-		/*std::ifstream infile(item.path());
-		infile.seekg(0, std::ios::end);
-		const auto length = infile.tellg();
-		infile.seekg(0);
-
-		std::byte buffer[4096];
-		assert(length < sizeof(buffer));
-		infile.read((char*)buffer, length);
-
-		BitIOWriter writer(true);
-		writer.WriteChars((const char*)buffer, length);
-		writer.Seek(BitPosition::Zero(), Seek::Set);
-
-		update.GetEntries().emplace_back(lastIndex, StringTableEntry(std::move(indexString), std::move(writer)));
-
-		cc::out << cc::fg::green << "Added missing static baseline " << index << " at position " << lastIndex << cc::endl;
-
-		lastIndex++;*/
-
-		BitIOWriter writer(true);
-		writer.Write(false); // "empty" static baseline
-		writer.PadToByte();
-		writer.SeekBits(0, Seek::Start);
-
-		update.GetEntries().emplace_back(lastIndex, StringTableEntry(std::move(indexString), std::move(writer)));
-
-		cc::out << cc::fg::green << "Added missing static baseline " << index << " at position " << lastIndex << cc::endl;
-
-		lastIndex++;
-	}
-#endif
 }
 
-static int ParseDemo(const std::string& inFile, const std::string& outFile)
+static int ParseDemo(const std::string_view& inFile, const std::string_view& outFile)
 {
 	cc::out << "test: sizeof(WorldState) = " << sizeof(WorldState) << " (" << sizeof(WorldState) / 1024 << " KB)" << std::endl;
 
@@ -208,39 +107,6 @@ static int ParseDemo(const std::string& inFile, const std::string& outFile)
 	cc::out << cc::fg::cyan << cc::bold << "Decoding demo..." << cc::reset << std::endl;
 	BitIOReader reader(data, BitPosition::FromBytes(dataLength));
 
-#if 0
-	DemoFile demo;
-	demo.ReadElement(reader);
-
-	{
-		auto world = WorldState::Create();
-		std::shared_ptr<UserReporter> userReporter;
-		if (GetCmdArgs().m_PrintUsers)
-			userReporter = UserReporter::Create(world);
-
-		demo.ApplyWorldState(*world);
-	}
-
-	if (!outFile.empty())
-	{
-		cc::out << C_CYN C_BOLD "Encoding output demo..." C_RESET << std::endl;
-		BitIOWriter writer(true);
-		demo.WriteElement(writer);
-		cc::out << C_CYN "Writing output demo (" << outFile << ')' << C_RESET << std::endl;
-		{
-			std::ofstream outDemo(outFile);
-			writer.Seek(BitPosition::Zero(), Seek::Start);
-
-			outDemo.write(reinterpret_cast<const char*>(writer.GetPtr()), writer.Length().Bytes());
-		}
-		cc::out << C_GRN C_BOLD "Completed demo save. Wrote " << writer.Length().TotalBytes() << " bytes to output demo." C_RESET << std::endl;
-	}
-	else
-	{
-		cc::out << "No outfile specified (-o), not saving any output." << std::endl;
-	}
-#else
-
 	{
 		DemoHeader header;
 		header.ReadElement(reader);
@@ -262,61 +128,6 @@ static int ParseDemo(const std::string& inFile, const std::string& outFile)
 				AddMissingStaticBaselines(*world, *static_cast<DemoStringTablesCommand*>(cmd.get()));
 
 			cmd->ApplyWorldState(*world);
-
-#if false
-			if (auto packet = dynamic_cast<DemoPacketCommand*>(cmd.get()))
-			{
-				for (int i = 0; i < packet->GetMessages().size(); i++)
-				{
-					auto& msg = packet->GetMessages()[i];
-					if (!msg)
-						continue;
-
-					if (msg->GetType() == NetMessageType::SVC_CREATESTRINGTABLE)
-					{
-						auto createMsg = static_cast<NetCreateStringTableMessage*>(msg.get());
-						if (createMsg->GetTableName() != "instancebaseline")
-							continue;
-
-						std::vector<std::pair<uint_fast16_t, StringTableEntry>>& entries = createMsg->GetTableUpdate().GetEntries();
-						entries.erase(entries.begin(), entries.begin() + 25);
-						continue;
-
-						if (auto newMsg = AddMissingStaticBaselines(*world))
-						{
-							packet->GetMessages().push_back(newMsg);
-							newMsg->ApplyWorldState(*world);
-							assert(std::sin(0.5) > 0);
-							i++;
-							continue;
-						}
-					}
-					else if (msg->GetType() == NetMessageType::SVC_UPDATESTRINGTABLE)
-					{
-						auto updateMsg = static_cast<NetUpdateStringTableMessage*>(msg.get());
-						if (updateMsg->GetTableID() != (int)KnownStringTable::StaticBaselines)
-							continue;
-
-						packet->GetMessages().erase(packet->GetMessages().begin() + i);
-						continue;
-
-						if (auto newMsg = AddMissingStaticBaselines(*world))
-						{
-							packet->GetMessages().push_back(newMsg);
-							newMsg->ApplyWorldState(*world);
-							assert(std::sin(0.5) > 0);
-							i++;
-							continue;
-						}
-					}
-				}
-			}
-			else
-			{
-				assert(cmd->GetType() != DemoCommandType::dem_signon);
-			}
-#endif
-
 			writer.Write(cmd->GetType());
 			cmd->WriteElement(writer);
 		}
@@ -334,7 +145,6 @@ static int ParseDemo(const std::string& inFile, const std::string& outFile)
 
 		//DumpStaticBaselines(*world);
 	}
-#endif
 
 	return 0; // No errors if we made it here
 }
@@ -350,13 +160,37 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	int retVal;
-
 #if RELEASE
 	try
 #endif
 	{
-		retVal = ParseDemo(GetCmdArgs().m_InFile, GetCmdArgs().m_OutFile);
+		if (const std::filesystem::path path(GetCmdArgs().m_InFile); path.extension() == ".txt")
+		{
+			cc::out << "Processing list file " << path << "." << cc::endl;
+
+			std::ifstream listfile(path);
+			const auto basePath = std::filesystem::path(path).remove_filename();
+
+			while (!listfile.eof())
+			{
+				char buf[512];
+				listfile.getline(buf, std::size(buf));
+
+				const auto inputPath = basePath / buf;
+
+				const auto outputPath = std::filesystem::path(inputPath)
+					.replace_filename(inputPath.filename().replace_extension().u8string() + "_REPAIRED.dem");
+
+				if (auto result = ParseDemo(inputPath.u8string(), outputPath.u8string()))
+					return result;
+			}
+
+			return 0;
+		}
+		else
+		{
+			return ParseDemo(GetCmdArgs().m_InFile, GetCmdArgs().m_OutFile);
+		}
 	}
 #if RELEASE
 	catch (const std::exception& except)
@@ -367,6 +201,4 @@ int main(int argc, char** argv)
 #endif
 
 	cc::out << cc::fg::cyan << "Finshed test run." << cc::endl;
-
-	return retVal;
 }

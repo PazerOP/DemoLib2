@@ -88,35 +88,35 @@ private:
 			return InternalReadUInt64(buffer);
 	}
 
-	static __forceinline constexpr uint8_t InternalReadUInt8(const std::byte* buffer)
+	static __forceinline uint8_t InternalReadUInt8(const std::byte* buffer)
 	{
 		return *reinterpret_cast<const uint8_t*>(buffer);
 	}
-	static __forceinline constexpr uint16_t InternalReadUInt16(const std::byte* buffer)
+	static __forceinline uint16_t InternalReadUInt16(const std::byte* buffer)
 	{
 		return *reinterpret_cast<const uint16_t*>(buffer);
 	}
-	static __forceinline constexpr uint32_t InternalReadUInt24(const std::byte* buffer)
+	static __forceinline uint32_t InternalReadUInt24(const std::byte* buffer)
 	{
 		return uint32_t(InternalReadUInt16(buffer)) | uint32_t(InternalReadUInt8(buffer + 2)) << 16;
 	}
-	static __forceinline constexpr uint32_t InternalReadUInt32(const std::byte* buffer)
+	static __forceinline uint32_t InternalReadUInt32(const std::byte* buffer)
 	{
 		return *reinterpret_cast<const uint32_t*>(buffer);
 	}
-	static __forceinline constexpr uint64_t InternalReadUInt40(const std::byte* buffer)
+	static __forceinline uint64_t InternalReadUInt40(const std::byte* buffer)
 	{
 		return uint64_t(InternalReadUInt32(buffer)) | uint64_t(InternalReadUInt8(buffer + 4)) << 32;
 	}
-	static __forceinline constexpr uint64_t InternalReadUInt48(const std::byte* buffer)
+	static __forceinline uint64_t InternalReadUInt48(const std::byte* buffer)
 	{
 		return uint64_t(InternalReadUInt32(buffer)) | uint64_t(InternalReadUInt16(buffer + 4)) << 32;
 	}
-	static __forceinline constexpr uint64_t InternalReadUInt56(const std::byte* buffer)
+	static __forceinline uint64_t InternalReadUInt56(const std::byte* buffer)
 	{
 		return uint64_t(InternalReadUInt32(buffer)) | uint64_t(InternalReadUInt24(buffer + 4)) << 32;
 	}
-	static __forceinline constexpr uint64_t InternalReadUInt64(const std::byte* buffer)
+	static __forceinline uint64_t InternalReadUInt64(const std::byte* buffer)
 	{
 		return *reinterpret_cast<const uint64_t*>(buffer);
 	}

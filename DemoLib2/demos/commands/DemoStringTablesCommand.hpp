@@ -6,6 +6,7 @@
 
 #include <map>
 #include <optional>
+#include <vector>
 
 class DemoStringTablesCommand : public TimestampedDemoCommand
 {

@@ -19,6 +19,8 @@
 #include <memory>
 #include <iostream>
 
+#pragma warning(disable : 4505)
+
 static void DumpStaticBaselines(const WorldState& world)
 {
 	const auto& staticBaselinesTable = world.GetStringTable(KnownStringTable::StaticBaselines);
@@ -43,7 +45,7 @@ static void DumpStaticBaselines(const WorldState& world)
 	}
 }
 
-static void AddMissingStaticBaselines(const WorldState& world, DemoStringTablesCommand& cmd)
+static bool AddMissingStaticBaselines(const WorldState& world, DemoStringTablesCommand& cmd)
 {
 	auto& baselineTable = cmd.GetTables().at("instancebaseline");
 
@@ -51,10 +53,11 @@ static void AddMissingStaticBaselines(const WorldState& world, DemoStringTablesC
 	for (int i = 0; i < 100; i++)
 		baselineTable.emplace_back();
 
+	bool addedAny = false;
 	for (uint_fast16_t serverClassIndex = 0; serverClassIndex < world.m_ServerClasses.size(); serverClassIndex++)
 	{
 		if (auto found = std::find_if(baselineTable.begin(), baselineTable.end(),
-			[serverClassIndex](const StringTableEntry& a) { return atoi(a.GetString().c_str()) == serverClassIndex; });
+			[serverClassIndex](const StringTableEntry& a) { return uint_fast16_t(atoi(a.GetString().c_str())) == serverClassIndex; });
 			found != baselineTable.end())
 		{
 			continue;
@@ -70,7 +73,10 @@ static void AddMissingStaticBaselines(const WorldState& world, DemoStringTablesC
 		baselineTable.emplace_back(buf, std::move(writer));
 
 		cc::out << cc::fg::green << "Added missing static baseline " << serverClassIndex << " at position " << baselineTable.size() - 1 << cc::endl;
+		addedAny = true;
 	}
+
+	return addedAny;
 }
 
 static int ParseDemo(const std::string_view& inFile, const std::string_view& outFile)
@@ -122,10 +128,11 @@ static int ParseDemo(const std::string_view& inFile, const std::string_view& out
 		header.SetSignonLength(0);
 		header.WriteElement(writer);
 
+		bool addedAny = false;
 		while (auto cmd = DemoFile::ReadCommand(reader))
 		{
 			if (cmd->GetType() == DemoCommandType::dem_stringtables)
-				AddMissingStaticBaselines(*world, *static_cast<DemoStringTablesCommand*>(cmd.get()));
+				addedAny = AddMissingStaticBaselines(*world, *static_cast<DemoStringTablesCommand*>(cmd.get())) || addedAny;
 
 			cmd->ApplyWorldState(*world);
 			writer.Write(cmd->GetType());
@@ -135,18 +142,37 @@ static int ParseDemo(const std::string_view& inFile, const std::string_view& out
 		writer.Write(DemoCommandType::dem_stop);
 
 		writer.PadToByte();
-		cc::out << "Writing output demo (" << outFile << ')' << cc::endl;
-		{
-			std::ofstream outDemo(outFile, std::ios::binary);
-			writer.Seek(BitPosition::Zero(), Seek::Start);
 
-			outDemo.write(reinterpret_cast<const char*>(writer.GetPtr()), writer.Length().Bytes());
+		if (addedAny)
+		{
+			cc::out << "Writing output demo (" << outFile << ')' << cc::endl;
+			{
+				std::ofstream outDemo(outFile, std::ios::binary);
+				writer.Seek(BitPosition::Zero(), Seek::Start);
+
+				outDemo.write(reinterpret_cast<const char*>(writer.GetPtr()), writer.Length().Bytes());
+
+				assert(outDemo.good());
+				if (!outDemo.good())
+					cc::out << cc::fg::red << cc::bold << "Failed to write output file " << outFile << '!' << cc::endl;
+			}
 		}
 
 		//DumpStaticBaselines(*world);
 	}
 
 	return 0; // No errors if we made it here
+}
+
+static std::string&& StringReplace(std::string&& str, const std::string_view& find, const std::string_view& replace)
+{
+	for (size_t startPos = str.find(find); startPos < str.size(); startPos = str.find(find, startPos + 1))
+	{
+		str.erase(startPos, find.size());
+		str.insert(startPos, replace);
+	}
+
+	return std::move(str);
 }
 
 int main(int argc, char** argv)
@@ -160,7 +186,7 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-#if RELEASE
+#ifndef _DEBUG
 	try
 #endif
 	{
@@ -177,11 +203,13 @@ int main(int argc, char** argv)
 				listfile.getline(buf, std::size(buf));
 
 				const auto inputPath = basePath / buf;
+				const auto inputFilename = inputPath.filename();
 
-				const auto outputPath = std::filesystem::path(inputPath)
-					.replace_filename(inputPath.filename().replace_extension().u8string() + "_REPAIRED.dem");
+				auto outputFolder = std::filesystem::path(inputPath).remove_filename() / "repaired";
+				std::filesystem::create_directories(outputFolder);
+				auto outputPath = outputFolder / inputFilename;
 
-				if (auto result = ParseDemo(inputPath.u8string(), outputPath.u8string()))
+				if (auto result = ParseDemo(inputPath.string(), outputPath.string()))
 					return result;
 			}
 
@@ -192,10 +220,10 @@ int main(int argc, char** argv)
 			return ParseDemo(GetCmdArgs().m_InFile, GetCmdArgs().m_OutFile);
 		}
 	}
-#if RELEASE
+#ifndef _DEBUG
 	catch (const std::exception& except)
 	{
-		cc::err << C_RED << C_BOLD << except.what() << C_RESET << std::endl;
+		cc::err << cc::fg::red << cc::bold << except.what() << cc::endl;
 		throw;
 	}
 #endif

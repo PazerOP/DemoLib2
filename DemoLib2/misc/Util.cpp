@@ -21,7 +21,7 @@ std::string strprintf(const char* fmt, ...)
 	}
 
 	// Write into the string
-	auto result = vsnprintf(retVal.data(), charCount + 1, fmt, args);
+	[[maybe_unused]] auto result = vsnprintf(retVal.data(), charCount + 1, fmt, args);
 	assert(result >= 0);
 
 	va_end(args);

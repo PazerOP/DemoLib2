@@ -16,7 +16,8 @@ StringTableUpdate::StringTableUpdate(const StringTable& table, uint_fast16_t ent
 	m_EntryCount = entries;
 	m_Entries.reserve(m_EntryCount);
 
-	if (m_IsUserDataFixedSize = table.IsUserDataFixedSize())
+	m_IsUserDataFixedSize = table.IsUserDataFixedSize();
+	if (m_IsUserDataFixedSize)
 	{
 		m_UserDataSizeBits = table.GetUserDataSizeBits();
 		m_UserDataSize = table.GetUserDataSize();
@@ -127,7 +128,7 @@ StringTableUpdate::HistoryResult StringTableUpdate::FindInHistory(const std::str
 	uint_fast8_t index = 0;
 	for (auto& elem : history)
 	{
-		const uint_fast8_t min = std::min<size_t>(std::min(uint_fast8_t(str.size()), uint_fast8_t(elem.size())), SUBSTRING_MAX);
+		const uint_fast8_t min = std::min({ uint_fast8_t(str.size()), uint_fast8_t(elem.size()), SUBSTRING_MAX });
 
 		uint_fast8_t matchingChars;
 		for (matchingChars = 0; matchingChars < min; matchingChars++)

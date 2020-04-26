@@ -190,7 +190,7 @@ BitIOWriter NetCreateStringTableMessage::Compress() const
 	BitIOWriter decompressedWriter(true);
 	m_TableUpdate->WriteElement(decompressedWriter);
 	decompressedWriter.PadToByte();
-	uint32_t decompressedSize = decompressedWriter.Length().TotalBytes();
+	size_t decompressedSize = decompressedWriter.Length().TotalBytes();
 
 	decompressedWriter.Seek(BitPosition::Zero(), Seek::Start);
 	BitIOReaderSource source(decompressedWriter);
@@ -205,11 +205,11 @@ BitIOWriter NetCreateStringTableMessage::Compress() const
 	};
 
 	BitIOWriterSink sink(compressedWriter);
-	uint32_t compressedSize = snappy::Compress(&source, &sink);
+	size_t compressedSize = snappy::Compress(&source, &sink);
 
 	compressedWriter.Seek(sizeInfoPos, Seek::Set);
-	compressedWriter.Write(decompressedSize);
-	compressedWriter.Write(compressedSize + 4); // The SNAP "header" is included in this size
+	compressedWriter.Write(uint32_t(decompressedSize));
+	compressedWriter.Write(uint32_t(compressedSize + 4)); // The SNAP "header" is included in this size
 
 	return compressedWriter;
 }
